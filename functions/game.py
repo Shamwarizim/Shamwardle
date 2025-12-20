@@ -7,7 +7,7 @@ import collections
 import random
 import os
 currentDir = os.path.dirname(__file__)
-dataPath = os.path.join(currentDir, 'data')
+dataPath = os.path.join(currentDir, '..', 'data')
 
 #################################################################################
 

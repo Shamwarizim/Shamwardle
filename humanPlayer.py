@@ -1,4 +1,4 @@
-from game import Wordle
+from functions.game import Wordle
 
-game = Wordle(humanPlayer=True)
+wordle = Wordle(humanPlayer=True)
 #game.outputAttr()
