@@ -6,24 +6,22 @@ log.basicConfig(format="[%(asctime)s] [%(filename)s/%(levelname)s]: %(message)s 
 import collections
 import random
 import os
-currentDir = os.path.dirname(__file__) #get current folder
+currentDir = os.path.dirname(__file__)
+dataPath = os.path.join(currentDir, 'data')
 
+#################################################################################
 
-
-## CLASS
 class Wordle:
     # INITIALISER
-    def __init__(self, wordFile, answer=None):
-        # Create Possibles list
-        wordFilePath = os.path.join(currentDir, f'{wordFile}.txt')
-        answersPath = os.path.join(currentDir, 'answers.txt')
+    def __init__(self, acceptedGuesses='guesses', humanPlayer=False, answer=None):
+        acceptedGuessesPath = os.path.join(dataPath, f'{acceptedGuesses}.txt')
+        answersPath = os.path.join(dataPath, 'answers.txt')
 
-        with open(wordFilePath) as txt: allowedWords = txt.read().splitlines()
+        with open(acceptedGuessesPath) as txt: allowedWords = txt.read().splitlines()
         with open(answersPath) as f: allowedAnswers = f.read().splitlines()
+
         allowedWords.extend(allowedAnswers)
         self.allowedWords = list(set(allowedWords)) # clear duplicates
-
-        self.wordFile = wordFile
         
         if answer is not None:
             self.answer = answer
@@ -31,42 +29,63 @@ class Wordle:
             self.answer = random.choice(allowedAnswers)
 
         self.guesses = []
+        self.colouredGuesses = []
         self.round = 0
-    
+        self.humanPlayer = humanPlayer
+
+        if humanPlayer == True:
+            self.humanLoop()
+
+        #############################################
+
     # FUNCTIONS
-    def playerLoop(self):
-        print('''~~SHAMWARDLE~~ (aka ~PY-DUCTION~)
+
+    def humanLoop(self):
+        print('''~~SHAMWARDLE~~
 2 is green, 1 is yellow, 0 is grey.
-Make a guess:
-''')
-        while self.round < 6:
+You have six guesses:''')
+        while self.round <= 7:
             self.guess( input('') )
     
+    ##########################################################
+
     def guess(self, guess):
         # Invalid word
-        if guess not in self.allowedWords:
-            print('WORD NOT ALLOWED')
+        if guess.lower() not in self.allowedWords:
+            if self.humanPlayer == True:
+                print('DISALLOWED WORD')
             return
 
         # Increment round
         self.round += 1
-        if self.round > 6:
-            print("You failed the Wordle D:")
+        if self.round >= 7:
             return
         
         # Update guess list
         self.guesses.append(guess)
         evaluatedGuess, colouredGuess = self.evaluate(guess)
-        print(colouredGuess)
+        self.colouredGuesses.append(colouredGuess)
+        if self.humanPlayer == True:
+            print(colouredGuess)
 
-        # Check for win
+        # Check for win or loss
         total = 0
         for (letter, colour) in evaluatedGuess:
             total += colour
-        if total == 10:
-            print(f'You got the Wordle in {self.round} guesses!')
 
+        if total == 10:
+            if self.humanPlayer == True:
+                print(f'You got the Shamwardle in {self.round} guesses!')
+                self.round = 8 #any number >7 works. this just ensures the human player loop stops
+        elif total != 10 and self.round == 6:
+            if self.humanPlayer == True:
+                print(f'''Is this what they're going to remember you for? Failing the Shamwardle?
+The word was {self.answer}.
+''')
+                self.round = 8 #any number >7 works. this just ensures the human player loop stops
         return evaluatedGuess, colouredGuess
+    
+    ##########################################################
 
     # EVALUATE
     def evaluate(self, guess):
@@ -108,7 +127,3 @@ Make a guess:
         for variable in vars(self):
             value = vars(self)[variable]
             print(f'{variable} = {value}') # cant use log cos it wont squeeze text
-
-
-game = Wordle('guesses')
-game.playerLoop()
