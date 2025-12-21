@@ -1,0 +1,11 @@
+This text file outlines everything the Pyduction Wordle solver takes into account to solve the Shamwardle in the current version.
+
+LETTER PERCENTAGE
+    - Technically calculated for every guess, BUT uses the same list (all allowed words) each time.
+
+WORD SCORE
+    - Adds together each letter in a word's percentage, but skips duplicate letters and greys.
+        The skip means:
+            - words spamming high value letters aren't overrepresented.
+            - greys add nothing to the word score as they neither gain info nor can be a correct guess... 
+                though sometimes they'll be needed to guess a word with high info, so we can't cull words with greys.

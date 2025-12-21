@@ -30,6 +30,7 @@ class Wordle:
 
         self.guesses = []
         self.colouredGuesses = []
+        self.colouredLetters = []
         self.round = 0
         self.humanPlayer = humanPlayer
 
@@ -68,6 +69,14 @@ You have six guesses:''')
         if self.humanPlayer == True:
             print(colouredGuess)
 
+        colouredLetters = [] # this is temporary to add to the list of lists
+        for i in range(5):
+            pair = (guess[i], int(colouredGuess[i]))
+            colouredLetters.append(pair)
+        self.colouredLetters.append(colouredLetters)
+
+        
+
         # Check for win or loss
         total = 0
         for (letter, colour) in evaluatedGuess:
@@ -83,7 +92,6 @@ You have six guesses:''')
 The word was {self.answer}.
 ''')
                 self.round = 8 #any number >7 works. this just ensures the human player loop stops
-        return evaluatedGuess, colouredGuess
     
     ##########################################################
 
