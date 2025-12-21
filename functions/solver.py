@@ -22,20 +22,21 @@ class Pyduction:
         self.yellows = {} # In format: {'letter': [position1, position2, position5]}
         self.greens = {} # In format: as above
         self.wordle = wordle
+        self.possibles = wordle.allowedWords
 
     def guess(self, guess=None):
         wordle = self.wordle
 
         # MAKE THE GUESS
         if guess is None: # guess best possible guess
-            self.genInfoScore(wordle.allowedWords)
+            self.genScores(wordle.allowedWords)
             wordle.guess(random.choice(self.maxWords))
         else: # guess inputted guess (if one was inputted)
             wordle.guess(guess)
 
         # STORE INFO FROM THE GUESS
-        colouredLetters = wordle.colouredLetters[-1]
-        for position, (letter, colour) in enumerate(colouredLetters):
+        singleWord_ColouredLetters = wordle.colouredLetters[-1]
+        for position, (letter, colour) in enumerate(singleWord_ColouredLetters):
             # Grey
             if colour == 0:
                 self.greys.append(letter)
@@ -52,8 +53,41 @@ class Pyduction:
 
 
 
-    def genInfoScore(self, words: list):
+    def genScores(self, words: list):
 #!! make it so we use a culled list for calculating letter percentage !!
+        wordle = self.wordle
+
+        for subList in wordle.colouredLetters:
+        # where subList is in form [('s', 1), ('o', 0), ('a', 0), ('r', 1), ('e', 2)]
+            for i, (letter, colour) in enumerate(subList):
+                # GREYS
+                if colour == 0:
+                    # Cull words where letter in THIS position
+                    self.possibles = [word for word in self.possibles if word[i] != letter]
+                # YELLOWS
+                if colour == 1:
+                    # Cull words where letter isn't in word OR is but at this position
+                    self.possibles = [word for word in self.possibles if letter in word and word[i] != letter]
+                # GREENS
+                if colour == 2:
+                    # Cull words where letter isn't in THIS position
+                    self.possibles = [word for word in self.possibles if word[i] == letter]
+
+        '''# CULL IMPOSSIBLES
+        for i, (letter, colour) in enumerate(prevGuess):
+            # GREYS
+            if colour == 0:
+                # Cull words where letter in THIS position
+                possibles = [word for word in possibles if word[i] != letter]
+            # YELLOWS
+            if colour == 1:
+                # Cull words where letter isn't in word OR is but at this position
+                possibles = [word for word in possibles if letter in word and word[i] != letter]
+            # GREENS
+            if colour == 2:
+                # Cull words where letter isn't in THIS position
+                possibles = [word for word in possibles if word[i] == letter]'''
+
         ## LETTER PERCENTAGE
         joinedLetters = ''.join(words)
 

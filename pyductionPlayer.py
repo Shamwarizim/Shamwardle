@@ -15,4 +15,4 @@ for i in range(6):
         print(f'Pyduction got it in {i+1} guesses!')
         break
     elif i == 5 and wordle.colouredGuesses[-1] != '22222':
-        print(f'Pyduction failed to get it.')
+        print(f'Pyduction failed to get it. Word was {wordle.answer}.')
