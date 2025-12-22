@@ -73,23 +73,8 @@ class Pyduction:
                     # Cull words where letter isn't in THIS position
                     self.possibles = [word for word in self.possibles if word[i] == letter]
 
-        '''# CULL IMPOSSIBLES
-        for i, (letter, colour) in enumerate(prevGuess):
-            # GREYS
-            if colour == 0:
-                # Cull words where letter in THIS position
-                possibles = [word for word in possibles if word[i] != letter]
-            # YELLOWS
-            if colour == 1:
-                # Cull words where letter isn't in word OR is but at this position
-                possibles = [word for word in possibles if letter in word and word[i] != letter]
-            # GREENS
-            if colour == 2:
-                # Cull words where letter isn't in THIS position
-                possibles = [word for word in possibles if word[i] == letter]'''
-
         ## LETTER PERCENTAGE
-        joinedLetters = ''.join(words)
+        joinedLetters = ''.join(self.possibles)
 
         letterNums = collections.Counter(joinedLetters).most_common() #--> list of 2 item tuples
 
@@ -99,14 +84,14 @@ class Pyduction:
             percent = round(percent, 2)
             letterPercentage[pair[0]] = percent
         
-        ## CREATE INFO SCORE
+        ## CREATE SCORE
         rankedWords = {}
         for word in words:
             # Add each letter probability (exclu doubles), UNLESS the letter is a grey.
             prob = 0
             usedLetters = []
             for letter in word:
-                if (letter not in usedLetters) and (letter not in self.greys):
+                if (letter not in usedLetters) and (letter not in self.greys) and (letter in letterPercentage):
                     prob += letterPercentage[letter]
                     usedLetters.append(letter)
             prob = round(prob, 5)

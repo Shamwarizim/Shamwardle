@@ -6,10 +6,10 @@ pyduction = Pyduction(wordle)
 
 
 # Play the game.
-print('GUESS COLOUR | Score | Words w/ Identical Score')
+print('GUESS COLOUR | Score | Equal Score / Total Possibles')
 for i in range(6):
     pyduction.guess()
-    print(f'{wordle.guesses[-1]} {wordle.colouredGuesses[-1]} | S {pyduction.maxScore} | {len(pyduction.maxWords)}')
+    print(f'{wordle.guesses[-1]} {wordle.colouredGuesses[-1]} | S {pyduction.maxScore} | {len(pyduction.maxWords)}/{len(pyduction.possibles)}')
     
     if wordle.colouredGuesses[-1] == '22222':
         print(f'Pyduction got it in {i+1} guesses!')

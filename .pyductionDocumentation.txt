@@ -1,0 +1,42 @@
+This outlines the CURRENT version of the Pyduction Solver.
+###################################################################################################################################
+    ~~ HOW IT WORKS ~~
+
+LETTER PERCENTAGE
+    - Calculated for each guess based on the list of possible words.
+
+WORD SCORE
+    - Adds together each letter in a word's percentage, but skips duplicate letters and greys.
+        The skip means:
+            - words spamming high value letters aren't overrepresented.
+            - greys add nothing to the word score as they neither gain info nor can be a correct guess... 
+                though sometimes they'll be needed to guess a word with high info, so we can't cull words with greys.
+
+GUESS
+    - The guess is always the word with maximum score.
+    - If there is a tie for maximum score it randomly picks between the maximums.
+
+###################################################################################################################################
+    ~~ NOTES ~~
+
+BUGS / UNINTENDED BEHAVIOUR
+    - Same word can be guessed multiple times.
+
+IDEAS
+    - Implement two separate probability and info scores.
+        - Add two separate lists: guessibles and possibles. Remove guessed words from guessibles.
+
+###################################################################################################################################
+    ~~ DATA ~~
+Ran 1000 trials.
+442 trials failed. ( 44.20% fail rate.)
+
+INCLUSIVE OF FAILS (COUNTED AS 7)
+Average of 5.637 guesses found.
+Median of 6.0 guesses found.
+Mode of 7 guesses found.
+
+EXCLUSIVE OF FAILS
+Average of 4.55735 guesses found.
+Median of 5.0 guesses found.
+Mode of 4 guesses found.
