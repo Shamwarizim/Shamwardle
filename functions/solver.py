@@ -28,22 +28,25 @@ class Pyduction:
         wordle = self.wordle
 
         # MAKE THE GUESS
-        #   Decide best possible guess.
+        # Decide best possible guess.
         if guess is None:
             self.genScores(wordle.allowedWords)
             # Final Guess Logic
             if len(wordle.guesses) == 5:
-                wordle.guess(random.choice(self.maxProbWords))
+                guess = random.choice(self.maxProbWords)
                 self.scoreUsed = 'PS'
+                wordle.guess(guess)
+
             # Regular Guess Logic
             else:
-                wordle.guess(random.choice(self.maxInfoWords))
+                guess = random.choice(self.maxInfoWords)
                 self.scoreUsed = 'IS'
+                wordle.guess(guess)
 
-
-        #   OR use guess inputted to the function.
+        # OR use guess inputted to the function.
         else:
             wordle.guess(guess)
+        
 
         # STORE INFO FROM THE GUESS
         singleWord_ColouredLetters = wordle.colouredLetters[-1]
@@ -109,10 +112,14 @@ class Pyduction:
             score = round(score, 5)
 
             # Store Final Scores
-            infoScores[word] = score
+            # for info (and prob) score, previously guessed words should have 0 score
+            if word not in wordle.guesses:
+                infoScores[word] = score
+            else:
+                infoScores[word] = 0
 
-            #   for probability score impossible words should have a score of 0
-            if word in self.possibles:
+            #   for prob score impossible words should have 0 score as well as above prereq
+            if (word in self.possibles) and (word not in wordle.guesses):
                 probScores[word] = score
             else:
                 probScores[word] = 0

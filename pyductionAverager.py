@@ -1,11 +1,14 @@
 from functions.game import Wordle
 from functions.solver import Pyduction
 import statistics
+import time
+import datetime
 
 
 trials = 1000
 
 guessNums = []
+startTime = time.time()
 for i in range(trials):
     wordle = Wordle()
     pyduction = Pyduction(wordle)
@@ -19,7 +22,9 @@ for i in range(trials):
         elif i == 5 and wordle.colouredGuesses[-1] != '22222':
             guessNums.append(7)
 
-    
+endTime = time.time()
+elapsedTimeSecs = round(endTime - startTime, 2)
+elapsedTime = datetime.timedelta(seconds=elapsedTimeSecs)
 
 
 # MMM
@@ -28,7 +33,7 @@ fails = len(guessNums) - len(successfulGuessNums)
 failRate = f"{( fails / len(guessNums) ):.2%}"
 
 print(f'''
-Ran {len(guessNums)} trials.
+Ran {len(guessNums)} trials. ( Time elapsed: {elapsedTime})
 {fails} trials failed. ( {failRate} fail rate.)
 
 INCLUSIVE OF FAILS (COUNTED AS 7)

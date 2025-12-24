@@ -11,6 +11,7 @@ INFO SCORE
             - words spamming high value letters aren't overrepresented.
             - greys add nothing to the word score as they neither gain info nor can be a correct guess... 
                 though sometimes they'll be needed to guess a word with high info, so we can't cull words with greys.
+    - Is set to 0 for words that have been guessed before.
 PROB SCORE 
     - Identical as info score, but any impossible guesses have a score of 0.
     - Only considered on the 6th guess. 
@@ -23,23 +24,22 @@ GUESS
     ~~ NOTES ~~
 
 BUGS / UNINTENDED BEHAVIOUR
-    - Same word can be guessed multiple times.
-        - SUGGESTED FIX: set info and prob score of guessed words to 0. As this is true, you get no more info AND it cannot be the word.
+    ...
 
 IDEAS
     ...
 
 ###################################################################################################################################
     ~~ DATA ~~
-Ran 1000 trials.
-122 trials failed. ( 12.20% fail rate.)
+Ran 1000 trials. ( Time elapsed: 0:18:15.600000)
+118 trials failed. ( 11.80% fail rate.)
 
 INCLUSIVE OF FAILS (COUNTED AS 7)
-Average of 5.297 guesses found.
+Average of 5.286 guesses found.
 Median of 6.0 guesses found.
 Mode of 6 guesses found.
 
 EXCLUSIVE OF FAILS
-Average of 5.06036 guesses found.
+Average of 5.05669 guesses found.
 Median of 5.0 guesses found.
 Mode of 6 guesses found.

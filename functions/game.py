@@ -56,6 +56,12 @@ You have six guesses:''')
             if self.humanPlayer == True:
                 print('DISALLOWED WORD')
             return
+        elif guess.lower() in self.guesses:
+            if self.humanPlayer == True:
+                print('ALREADY GUESSED WORD')
+            else:
+                raise Exception('You cannot guess the same word multiple times.')
+            return
 
         # Increment round
         self.round += 1
