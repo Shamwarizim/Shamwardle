@@ -28,10 +28,21 @@ class Pyduction:
         wordle = self.wordle
 
         # MAKE THE GUESS
-        if guess is None: # guess best possible guess
+        #   Decide best possible guess.
+        if guess is None:
             self.genScores(wordle.allowedWords)
-            wordle.guess(random.choice(self.maxWords))
-        else: # guess inputted guess (if one was inputted)
+            # Final Guess Logic
+            if len(wordle.guesses) == 5:
+                wordle.guess(random.choice(self.maxProbWords))
+                self.scoreUsed = 'PS'
+            # Regular Guess Logic
+            else:
+                wordle.guess(random.choice(self.maxInfoWords))
+                self.scoreUsed = 'IS'
+
+
+        #   OR use guess inputted to the function.
+        else:
             wordle.guess(guess)
 
         # STORE INFO FROM THE GUESS
@@ -54,7 +65,6 @@ class Pyduction:
 
 
     def genScores(self, words: list):
-#!! make it so we use a culled list for calculating letter percentage !!
         wordle = self.wordle
 
         for subList in wordle.colouredLetters:
@@ -84,22 +94,35 @@ class Pyduction:
             percent = round(percent, 2)
             letterPercentage[pair[0]] = percent
         
-        ## CREATE SCORE
-        rankedWords = {}
+        ## CREATE SCORES
+        infoScores = {}
+        probScores = {}
         for word in words:
-            # Add each letter probability (exclu doubles), UNLESS the letter is a grey.
-            prob = 0
+            score = 0
+            # Letter Probability
+            #   Add each letter probability (exclu doubles), UNLESS the letter is a grey.
             usedLetters = []
             for letter in word:
                 if (letter not in usedLetters) and (letter not in self.greys) and (letter in letterPercentage):
-                    prob += letterPercentage[letter]
+                    score += letterPercentage[letter]
                     usedLetters.append(letter)
-            prob = round(prob, 5)
+            score = round(score, 5)
 
-            rankedWords[word] = prob
+            # Store Final Scores
+            infoScores[word] = score
 
+            #   for probability score impossible words should have a score of 0
+            if word in self.possibles:
+                probScores[word] = score
+            else:
+                probScores[word] = 0
+        
 
-        # Get maximum possibles.
-        self.maxScore = max(rankedWords.values())
-        self.maxWords = [k for k, v in rankedWords.items() if v == self.maxScore]
-        self.rankedWords = rankedWords
+        # Get maximum scores.
+        self.maxInfoScore = max(infoScores.values())
+        self.maxInfoWords = [k for k, v in infoScores.items() if v == self.maxInfoScore]
+        self.maxProbScore = max(probScores.values())
+        self.maxProbWords = [k for k, v in probScores.items() if v == self.maxProbScore]
+        # Save raw scores too.
+        self.infoScores = infoScores
+        self.probScores = probScores

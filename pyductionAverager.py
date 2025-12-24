@@ -41,5 +41,3 @@ Average of {round(statistics.mean(successfulGuessNums), 5)} guesses found.
 Median of {statistics.median(successfulGuessNums)} guesses found.
 Mode of {statistics.mode(successfulGuessNums)} guesses found.
 ''')
-print(guessNums)
-print(successfulGuessNums)
