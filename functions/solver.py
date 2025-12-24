@@ -18,7 +18,7 @@ import random
 
 class Pyduction:
     def __init__(self, wordle: object):
-        self.greys = []
+        self.greys = set()
         self.yellows = {} # In format: {'letter': [position1, position2, position5]}
         self.greens = {} # In format: as above
         self.wordle = wordle
@@ -32,7 +32,7 @@ class Pyduction:
         if guess is None:
             self.genScores(wordle.allowedWords)
             # Final Guess Logic
-            if len(wordle.guesses) == 5:
+            if len(wordle.guessesSet) == 5:
                 guess = random.choice(self.maxProbWords)
                 self.scoreUsed = 'PS'
                 wordle.guess(guess)
@@ -53,7 +53,7 @@ class Pyduction:
         for position, (letter, colour) in enumerate(singleWord_ColouredLetters):
             # Grey
             if colour == 0:
-                self.greys.append(letter)
+                self.greys.add(letter)
             # Yellow
             elif colour == 1:
                 if letter not in self.yellows:
@@ -70,32 +70,50 @@ class Pyduction:
     def genScores(self, words: list):
         wordle = self.wordle
 
-        for subList in wordle.colouredLetters:
-        # where subList is in form [('s', 1), ('o', 0), ('a', 0), ('r', 1), ('e', 2)]
-            for i, (letter, colour) in enumerate(subList):
-                # GREYS
-                if colour == 0:
-                    # Cull words where letter in THIS position
-                    self.possibles = [word for word in self.possibles if word[i] != letter]
-                # YELLOWS
-                if colour == 1:
-                    # Cull words where letter isn't in word OR is but at this position
-                    self.possibles = [word for word in self.possibles if letter in word and word[i] != letter]
-                # GREENS
-                if colour == 2:
-                    # Cull words where letter isn't in THIS position
-                    self.possibles = [word for word in self.possibles if word[i] == letter]
+        ## POSSIBLES LIST
+        newPossibles = []
+        for word in self.possibles:
+            possible = True
+
+            # Greys
+            for letter in self.greys:
+                if letter in word:
+                    possible = False
+                    break
+            # Yellows
+            for letter, positions in self.yellows.items():
+                if letter not in word:
+                    possible = False
+                    break
+                for pos in positions:
+                    if word[pos] == letter:
+                        possible = False
+                        break
+            # Greens
+            for letter, positions in self.greens.items():
+                for pos in positions:
+                    if word[pos] != letter:
+                        possible = False
+                        break
+            
+            if possible:
+                newPossibles.append(word)
+
+        self.possibles = newPossibles
 
         ## LETTER PERCENTAGE
-        joinedLetters = ''.join(self.possibles)
+        # Count
+        letterCounts = collections.Counter() # create empty counter
+        for word in self.possibles:
+            letterCounts.update(word)
+        #--> letterCounts: dict
 
-        letterNums = collections.Counter(joinedLetters).most_common() #--> list of 2 item tuples
-
-        letterPercentage = {}
-        for pair in letterNums:
-            percent = ( pair[1] / len(joinedLetters) ) * 100
-            percent = round(percent, 2)
-            letterPercentage[pair[0]] = percent
+        # Percentage
+        total = sum(letterCounts.values())
+        letterPercentage = {
+            l: round((c / total) * 100, 2)
+            for l, c in letterCounts.items()
+        }
         
         ## CREATE SCORES
         infoScores = {}
@@ -104,22 +122,19 @@ class Pyduction:
             score = 0
             # Letter Probability
             #   Add each letter probability (exclu doubles), UNLESS the letter is a grey.
-            usedLetters = []
-            for letter in word:
-                if (letter not in usedLetters) and (letter not in self.greys) and (letter in letterPercentage):
+            for letter in set(word):
+                if (letter not in self.greys) and (letter in letterPercentage):
                     score += letterPercentage[letter]
-                    usedLetters.append(letter)
-            score = round(score, 5)
 
             # Store Final Scores
             # for info (and prob) score, previously guessed words should have 0 score
-            if word not in wordle.guesses:
+            if word not in wordle.guessesSet:
                 infoScores[word] = score
             else:
                 infoScores[word] = 0
 
             #   for prob score impossible words should have 0 score as well as above prereq
-            if (word in self.possibles) and (word not in wordle.guesses):
+            if (word in self.possibles) and (word not in wordle.guessesSet):
                 probScores[word] = score
             else:
                 probScores[word] = 0

@@ -27,19 +27,20 @@ BUGS / UNINTENDED BEHAVIOUR
     ...
 
 IDEAS
-    ...
+    - The program was previously 
+    - Prob score of 0 for words that are allowed guesses but not allowed answers.
 
 ###################################################################################################################################
     ~~ DATA ~~
-Ran 1000 trials. ( Time elapsed: 0:18:15.600000)
-118 trials failed. ( 11.80% fail rate.)
+Ran 1000 trials. ( Time elapsed: 0:16:23.890000) <-- previously ~18mins
+88 trials failed. ( 8.80% fail rate.)
 
 INCLUSIVE OF FAILS (COUNTED AS 7)
-Average of 5.286 guesses found.
-Median of 6.0 guesses found.
+Average of 5.203 guesses found.
+Median of 5.0 guesses found.
 Mode of 6 guesses found.
 
 EXCLUSIVE OF FAILS
-Average of 5.05669 guesses found.
+Average of 5.02961 guesses found.
 Median of 5.0 guesses found.
 Mode of 6 guesses found.

@@ -29,6 +29,7 @@ class Wordle:
             self.answer = random.choice(allowedAnswers)
 
         self.guesses = []
+        self.guessesSet = set()
         self.colouredGuesses = []
         self.colouredLetters = []
         self.round = 0
@@ -70,6 +71,7 @@ You have six guesses:''')
         
         # Update guess list
         self.guesses.append(guess)
+        self.guessesSet.add(guess)
         evaluatedGuess, colouredGuess = self.evaluate(guess)
         self.colouredGuesses.append(colouredGuess)
         if self.humanPlayer == True:
